@@ -1,0 +1,53 @@
+  .todo-attribut {
+    margin-bottom: 12px;
+    align-items: center;
+    justify-content: space-between;
+    animation-duration: 0.3s;
+  }
+
+  textarea {
+    resize: none;
+    box-sizing: content-box;
+  }
+  
+  .todo-input {
+    width: 100%;
+    padding: 10px 18px;
+    font-size: 18px;
+    margin-bottom: 16px;
+    margin-left: 12px;
+  
+    &:focus {
+      outline: 0;
+    }
+  }
+
+  .todo-attribut-label {
+    padding: 10px;
+    border: 1px solid white;
+    margin-left: 12px;
+  }
+  
+  .extra-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    border-top: 1px solid lightgrey;
+    padding-top: 14px;
+    margin-bottom: 14px;
+  }
+  
+  button {
+    font-size: 14px;
+    background-color: white;
+    appearance: none;
+  
+    &:hover {
+      background: lightgreen;
+    }
+  
+    &:focus {
+      outline: none;
+    }
+  }

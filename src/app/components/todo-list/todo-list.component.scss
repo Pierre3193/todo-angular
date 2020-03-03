@@ -1,3 +1,35 @@
+.todo-item {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation-duration: 0.3s;
+}
+
+.remove-item {
+  cursor: pointer;
+  margin-left: 14px;
+  &:hover {
+    color: black;
+  }
+}
+
+.todo-item-left { // later
+  display: flex;
+  align-items: center;
+}
+
+.todo-item-label {
+  padding: 10px;
+  border: 1px solid white;
+  margin-left: 12px;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: grey;
+}
+
 .todo-input {
     width: 100%;
     padding: 10px 18px;

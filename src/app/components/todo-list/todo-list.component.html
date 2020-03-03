@@ -1,27 +1,40 @@
-<img class="logo" width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<mat-form-field class="todo-input">
+  <input matInput type="text" placeholder="What needs to be done">
+</mat-form-field>
 
-<input type="text" class="todo-input" placeholder="What needs to be done">
-
-<todo-item 
-  *ngFor="let todo of todoService.todos" 
-  [todo]="todo"
-  >
-</todo-item>
-
-<div class="extra-container">
-  <div><label><input type="checkbox"> Check All</label></div>
-  <div>{{ todoService.remaining() }}</div>
+<div *ngIf="loading$ | async ; else todoList">
+  <mat-spinner style="margin: auto"></mat-spinner>
 </div>
-
-<div class="extra-container">
-  <div>
-    <button class="active">All</button>
-    <button>Active</button>
-    <button>Completed</button>
+<ng-template #todoList>
+  <div class="todo-item" *ngFor="let todo of (todoSubscription$ | async)">
+    <div class="todo-item-left">
+      <mat-checkbox [(ngModel)]="todo.completed" (change)="todoCompleted(todo)"></mat-checkbox>
+      <div class="todo-item-label" (click)="editTodo(todo)" [ngClass]=" { 'completed' :
+    todo.completed }">{{ todo.title }}</div>
+    </div>
+    <div class="remove-item">
+        &times;
+    </div>
   </div>
 
-  <div>
-    <button>Clear Completed</button>
+  <div class="extra-container">
+    <div><mat-checkbox type="checkbox"> Check All</mat-checkbox></div>
+    <div>{{ remaining$ | async }}</div>
   </div>
+  
+  <div class="extra-container">
+    <div>
+      <button mat-button class="active">All</button>
+      <button mat-button>Active</button>
+      <button mat-button>Completed</button>
+    </div>
+  
+    <div>
+      <button mat-button>Clear Completed</button>
+    </div>
+  
+  </div>
+</ng-template>
 
-</div>
+
+

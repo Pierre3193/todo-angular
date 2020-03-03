@@ -1,0 +1,38 @@
+
+<div class="todo-attribut" *ngIf="todo">
+    <div *ngIf="todo.title && !todo.editingTitle; else editingTodoTitle" 
+    class="todo-attribut-label" (click)="editTodoTile()">{{ todo.title }}</div>
+    <ng-template #editingTodoTitle>
+        <mat-form-field>
+        <input matInput type="text" [(ngModel)]
+            ="todo.title" placeholder="Add a title for your todo" 
+            (click)="editTodoTile()" (keyup.enter)
+            ="doneEditTodoTitle()" (keyup.esc)="cancelEditTodoTitle()" autofocus> 
+        </mat-form-field>
+    </ng-template>
+</div>
+
+<div class="extra-container"></div>
+
+<div class="todo-attribut" *ngIf="todo">
+    <div *ngIf="todo.description && !todo.editingDescription; else editingTodoDescription" 
+        class="todo-attribut-label"(click)="editTodoDescription()">{{ todo.description }}</div>
+    <ng-template #editingTodoDescription>
+        <mat-form-field>
+            <textarea matInput type="text" [(ngModel)]
+                ="todo.description" placeholder="Add a description for your todo" 
+                (click)="editTodoDescription()" (keyup.enter)
+                ="doneEditTodoDescription()" (keyup.esc)="cancelEditTodoDescription()" autofocus 
+                cdkTextareaAutosize="true">
+        </textarea>
+        </mat-form-field>
+    </ng-template>
+    
+</div>
+  
+<div class="extra-container">
+    <div>
+      <button mat-button (click)="backTodos()">Back</button>
+    </div>
+  
+</div>

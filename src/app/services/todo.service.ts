@@ -9,19 +9,16 @@ import { Observable } from 'rxjs';
 export class TodoService {
 
   private SERVER_URL: string = 'api/'
-  todos: Todo[];
-  
 
   constructor(private httpClient: HttpClient) {
-    this.getTodos().subscribe(todos => this.todos = todos.sort(this.compare));
    }
 
   public getTodos(): Observable<Todo[]>{
     return this.httpClient.get<Todo[]>(this.SERVER_URL + 'todos');
   }
 
-  public getTodo(id){
-    return this.httpClient.get(`${this.SERVER_URL + 'todos'}/${id}`);
+  public getTodo(id):Observable<Todo>{
+    return this.httpClient.get<Todo>(`${this.SERVER_URL + 'todos'}/${id}`);
   }
 
   public createTodo(todo: Todo){
@@ -45,30 +42,5 @@ export class TodoService {
       return 0;
     }
   }
-
-  remaining(): number {
-    if (this.todos){
-      return this.todos.filter(todo => !todo.completed).length;
-    }else{
-      return 0;
-    }
-  }
-
-  todoCompleted(todo: Todo): void {
-    this.updateTodo(todo);
-    if (todo.completed){
-      var moved = false
-      for(let i = 0; i < this.todos.length; i++){
-        if (this.todos[i] === todo && i !== this.todos.length - 1){
-          this.todos.splice(i,1);
-          this.todos.splice(this.todos.length + 1,1,todo);
-        }
-      }
-    }else{
-      this.todos = this.todos.sort(this.compare);
-    }
-    
-  }
-  
 
 }
