@@ -6,6 +6,7 @@ export class TodoStateService {
   todoError : Error;
   loading : boolean;
   editingTodo: Todo;
+  creatingTodo: Todo;
 
   constructor() { }
 }
@@ -15,6 +16,7 @@ export const initializeState = () : TodoStateService => {
     todos : Array<Todo>(), 
     todoError: null, 
     loading: false, 
-    editingTodo: null
+    editingTodo: null,
+    creatingTodo:null
   };
 }

@@ -19,7 +19,14 @@ export const getTodoAction = createAction('Get Todo',
 props<{payload: number }>()
 );
 
-
 export const successgetTodoAction = createAction('Success Get Todo',
 props<{payload: Todo }>()
+);
+
+export const CreateTodoAction = createAction('Create Todo',
+props<{payload: Partial<Todo> | Todo }>()
+);
+
+export const PrepareCreateTodoAction = createAction('Prepare create Todo',
+props<{payload: Partial<Todo> | Todo }>()
 );

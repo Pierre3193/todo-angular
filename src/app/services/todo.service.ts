@@ -7,10 +7,19 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TodoService {
+  todo: Todo;
 
   private SERVER_URL: string = 'api/'
 
   constructor(private httpClient: HttpClient) {
+    this.todo = {
+      id : 0,
+      title: '',
+      completed: false,
+      editingTitle: false,
+      editingDescription: false,
+      description: ""
+    };
    }
 
   public getTodos(): Observable<Todo[]>{
@@ -39,8 +48,7 @@ export class TodoService {
     }else if (!a.completed && b.completed){
       return -1;
     }else{
-      return 0;
+      return b.id - a.id
     }
   }
-
 }

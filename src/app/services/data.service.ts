@@ -37,7 +37,7 @@ export class DataService implements InMemoryDbService{
       {
         'id' : 3,
         'title' : 'Finir la quatrième user storie',
-        'completed' : false,
+        'completed' : true,
         'editingTitle' : false,
         'editingDescription' : false,
         'description' : ''

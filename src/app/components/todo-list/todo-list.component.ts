@@ -19,8 +19,11 @@ export class TodoListComponent implements OnInit {
   remaining$: Observable<number>;
   loading$: Observable<boolean>;
   todoSubscription$: Observable<Todo[]>;
+  idForTodo$ : Observable<number>;
   todoError: Error = null;
 
+  todoTitle: string = "";
+  todoId: number;
 
   constructor(public todoService: TodoService,
               private store: Store<{todos: TodoStateService}>,
@@ -47,6 +50,13 @@ export class TodoListComponent implements OnInit {
         return x.loading;
       })
     );
+    this.idForTodo$ = this.todo$
+    .pipe(
+      map(x => {
+        return x.todos.length;
+      })
+    );
+    this.idForTodo$.subscribe(res => this.todoId=res)
     this.store.dispatch(todoAction.getTodosAction());
   }
 
@@ -56,5 +66,37 @@ export class TodoListComponent implements OnInit {
 
   todoCompleted(todo: Todo): void {
     this.store.dispatch(todoAction.UpdateTodoAction({ payload: todo}));
+  }
+
+  AddNewTodo(){
+    if (this.todoTitle.trim().length === 0){ 
+      return;
+    }
+    let todo = {
+      title: this.todoTitle,
+      completed: false,
+      editingTitle: false,
+      editingDescription: false,
+      description: ""
+    };
+    this.store.dispatch(todoAction.CreateTodoAction({payload:todo}));
+    this.todoTitle = "";
+  }
+
+  cancelAddNewTodo(){
+    this.todoTitle = "";
+  }
+
+  AddNewTodoView(){
+    let todo = {
+      title: this.todoTitle,
+      completed: false,
+      editingTitle: false,
+      editingDescription: false,
+      description: ""
+    } as Partial<Todo>;
+    this.store.dispatch(todoAction.PrepareCreateTodoAction({payload:todo}));
+    this.todoTitle = "";
+    this.router.navigate([`/todos/createTodo`])
   }
 }

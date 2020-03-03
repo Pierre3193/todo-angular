@@ -33,7 +33,7 @@ export class TodoEffectsService {
       )
     );
 
-    updatetodo$: Observable<Action> = createEffect(() =>
+  updatetodo$: Observable<Action> = createEffect(() =>
     this.action$.pipe(
       ofType(todoAction.UpdateTodoAction),
       mergeMap(action =>
@@ -57,6 +57,22 @@ export class TodoEffectsService {
           map((editingTodo: Todo) =>
             {
               return todoAction.successgetTodoAction({payload: editingTodo});
+            }),
+            catchError((error: Error) => {
+              return of(todoAction.errorTodoAction(error))
+            })
+        ))
+      )
+    );
+  
+  createtodo$: Observable<Action> = createEffect(() =>
+    this.action$.pipe(
+      ofType(todoAction.CreateTodoAction),
+      mergeMap(action =>
+        this.TodoService.createTodo(action.payload as Todo).pipe(
+          map(() =>
+            {
+              return todoAction.getTodosAction();
             }),
             catchError((error: Error) => {
               return of(todoAction.errorTodoAction(error))

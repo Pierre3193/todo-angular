@@ -21,6 +21,7 @@ export class TodoEditComponent implements OnInit{
   todo$: Observable<TodoStateService>;
   todoSubscription$: Observable<Todo[]>;
   loading$: Observable<boolean>;
+  creatingTodo$ : Observable<Todo>;
 
   numbers = new RegExp(/^[0-9]+$/);
   beforeEditTitleCache: string;
@@ -28,7 +29,8 @@ export class TodoEditComponent implements OnInit{
   initialTitleCache: string;
   initialDescriptionCache: string;
 
-
+  createTodoReg = new RegExp(/^createTodo$/);
+  
   constructor(public todoService: TodoService,
               private store: Store<{todos: TodoStateService}>,
               private route : ActivatedRoute,
@@ -52,26 +54,36 @@ export class TodoEditComponent implements OnInit{
       })
     );
     
-    
     const id = this.route.snapshot.paramMap.get('id')
     this.store.dispatch(todoAction.getTodoAction({payload:Number(id)})); 
-    if (!this.numbers.test(id)){
-      this.router.navigate(['']);
-    }
     combineLatest(this.route.params, this.todo$).subscribe(([params, state]) => {
-        const id = params.id;
-        const todos = state.todos;
-        const todo = state.editingTodo;
-        if (!state.loading && Number(id) < (todos.length)){
-          this.todo = todo;
-          this.initialTitleCache = this.todo.title;
-          this.initialDescriptionCache = this.todo.description;
-        }else if (!state.loading && Number(id) >= (todos.length)) {
-          this.router.navigate(['']);
-        }else{
-        }  
-      }
-    );
+      const id = params.id;
+      const todos = state.todos;
+      const todo = state.editingTodo;
+      if (!state.loading && this.createTodoReg.test(id)){
+        this.todo = state.creatingTodo
+        if (this.todo === null){
+          this.todo = {
+            title:"",
+            completed: false,
+            editingTitle: false,
+            editingDescription: false,
+            description: ""
+          } as Todo
+        }
+        this.initialTitleCache = "";
+        this.initialDescriptionCache = "";
+      }else if (!state.loading && !this.numbers.test(id)){
+        this.router.navigate(['']);
+      }else if (!state.loading && Number(id) < (todos.length)){
+        this.todo = todo;
+        this.initialTitleCache = this.todo.title;
+        this.initialDescriptionCache = this.todo.description;
+      }else if (!state.loading && Number(id) >= (todos.length)) {
+        this.router.navigate(['']);
+      }else{
+      }  
+    });
   }
 
   backTodos(): void{
@@ -85,15 +97,26 @@ export class TodoEditComponent implements OnInit{
 
     if ( this.todo.title !== this.initialTitleCache
       || this.todo.description !== this.initialDescriptionCache){
+        let data = "";
+        if (this.todo.id){
+          data = "Do you confirm the update of this todo ?";
+        }else{
+          data = "Do you confirm the creation of this todo ?";
+        }
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           width: '500px',
-          data: "Do you confirm the update of this todo ?"
+          data: data
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result) {
             if ( this.todo.title !== this.beforeEditTitleCache
                 || this.todo.description !== this.beforeEditDescriptionCache){
-              this.store.dispatch(todoAction.UpdateTodoAction({ payload: this.todo}));
+                if (this.todo.id){
+                  this.store.dispatch(todoAction.UpdateTodoAction({ payload: this.todo}));
+                }else{
+                  this.store.dispatch(todoAction.CreateTodoAction({ payload: this.todo}));
+                }
+              
             }
           }
           this.router.navigate(['/todos']);

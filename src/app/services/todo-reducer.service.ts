@@ -18,6 +18,10 @@ const reducer = createReducer(
   on(todoAction.getTodoAction,  state => {return {...state, loading: true}}),
   on(todoAction.successgetTodoAction, (state:TodoStateService, {payload})=> {
     return {...state, editingTodo: payload, loading: false}
+  }),
+  on(todoAction.CreateTodoAction, state => {return {...state, loading: true, creatingTodo:null}}),
+  on(todoAction.PrepareCreateTodoAction, (state:TodoStateService, {payload}) => {
+    return {...state, creatingTodo: payload}
   })
 )
 

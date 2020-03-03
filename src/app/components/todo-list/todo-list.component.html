@@ -1,5 +1,8 @@
 <mat-form-field class="todo-input">
-  <input matInput type="text" placeholder="What needs to be done">
+  <input matInput type="text" placeholder="What needs to be done" 
+    [(ngModel)]="todoTitle" (keyup.enter)="AddNewTodo()" 
+    (keyup.esc)="cancelAddNewTodo()" (dblclick)="AddNewTodoView()" 
+    autofocus>
 </mat-form-field>
 
 <div *ngIf="loading$ | async ; else todoList">
