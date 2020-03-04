@@ -30,3 +30,7 @@ props<{payload: Partial<Todo> | Todo }>()
 export const PrepareCreateTodoAction = createAction('Prepare create Todo',
 props<{payload: Partial<Todo> | Todo }>()
 );
+
+export const DeleteTodo = createAction('Delete Todo',
+props<{payload: number }>()
+);

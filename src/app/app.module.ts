@@ -54,7 +54,7 @@ import { AutofocusFixModule } from 'ngx-autofocus-fix';
     AutofocusFixModule.forRoot()
   ],
   entryComponents: [ConfirmationDialogComponent],
-  providers: [DataService,TodoService],
+  providers: [TodoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,39 +1,36 @@
-<mat-form-field class="todo-input">
-  <input matInput type="text" placeholder="What needs to be done" 
-    [(ngModel)]="todoTitle" (keyup.enter)="AddNewTodo()" 
-    (keyup.esc)="cancelAddNewTodo()" (dblclick)="AddNewTodoView()" 
-    autofocus>
-</mat-form-field>
-
 <div *ngIf="loading$ | async ; else todoList">
   <mat-spinner style="margin: auto"></mat-spinner>
 </div>
 <ng-template #todoList>
+  <div class="extra-container"></div>
   <div class="todo-item" *ngFor="let todo of (todoSubscription$ | async)">
     <div class="todo-item-left">
       <mat-checkbox [(ngModel)]="todo.completed" (change)="todoCompleted(todo)"></mat-checkbox>
-      <div class="todo-item-label" (click)="editTodo(todo)" [ngClass]=" { 'completed' :
+      <div class="todo-item-label" [ngClass]=" { 'completed' :
     todo.completed }">{{ todo.title }}</div>
     </div>
-    <div class="remove-item">
-        &times;
+    <div>
+      <button mat-button color="primary" (click)="editTodo(todo)">Edit</button>
+      <button mat-button color="warn" (click)="deleteTodo(todo.id)">Delete</button>
     </div>
   </div>
 
   <div class="extra-container">
-    <div><mat-checkbox type="checkbox"> Check All</mat-checkbox></div>
+    <div>
+      <label> 
+        Activating todos:
+      </label>
+    </div>
     <div>{{ remaining$ | async }}</div>
   </div>
   
   <div class="extra-container">
     <div>
-      <button mat-button class="active">All</button>
-      <button mat-button>Active</button>
-      <button mat-button>Completed</button>
+      <button mat-button (click)="addNewTodoView()">Create New Todo</button>
     </div>
   
-    <div>
-      <button mat-button>Clear Completed</button>
+    <div *ngIf="atLeastOneCompleted$ | async">
+      <button mat-button (click)="clearCompleted()">Clear Completed</button>
     </div>
   
   </div>

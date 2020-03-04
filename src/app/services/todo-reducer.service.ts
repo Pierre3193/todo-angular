@@ -22,7 +22,8 @@ const reducer = createReducer(
   on(todoAction.CreateTodoAction, state => {return {...state, loading: true, creatingTodo:null}}),
   on(todoAction.PrepareCreateTodoAction, (state:TodoStateService, {payload}) => {
     return {...state, creatingTodo: payload}
-  })
+  }),
+  on(todoAction.DeleteTodo, state => {return {...state, loading: true}})
 )
 
 export function todoReducer(state: TodoStateService | undefined, action: Action) {

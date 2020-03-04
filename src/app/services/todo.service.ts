@@ -7,19 +7,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TodoService {
-  todo: Todo;
 
   private SERVER_URL: string = 'api/'
 
   constructor(private httpClient: HttpClient) {
-    this.todo = {
-      id : 0,
-      title: '',
-      completed: false,
-      editingTitle: false,
-      editingDescription: false,
-      description: ""
-    };
    }
 
   public getTodos(): Observable<Todo[]>{

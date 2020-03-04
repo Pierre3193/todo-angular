@@ -80,4 +80,20 @@ export class TodoEffectsService {
         ))
       )
     );
+  
+  deletetodo$: Observable<Action> = createEffect(() =>
+    this.action$.pipe(
+      ofType(todoAction.DeleteTodo),
+      mergeMap(action =>
+        this.TodoService.deleteTodo(action.payload).pipe(
+          map(() =>
+            {
+              return todoAction.getTodosAction();
+            }),
+            catchError((error: Error) => {
+              return of(todoAction.errorTodoAction(error))
+            })
+        ))
+      )
+    );
 }

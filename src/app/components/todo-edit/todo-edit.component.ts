@@ -58,7 +58,6 @@ export class TodoEditComponent implements OnInit{
     this.store.dispatch(todoAction.getTodoAction({payload:Number(id)})); 
     combineLatest(this.route.params, this.todo$).subscribe(([params, state]) => {
       const id = params.id;
-      const todos = state.todos;
       const todo = state.editingTodo;
       if (!state.loading && this.createTodoReg.test(id)){
         this.todo = state.creatingTodo
@@ -66,7 +65,7 @@ export class TodoEditComponent implements OnInit{
           this.todo = {
             title:"",
             completed: false,
-            editingTitle: false,
+            editingTitle: true,
             editingDescription: false,
             description: ""
           } as Todo
@@ -75,11 +74,11 @@ export class TodoEditComponent implements OnInit{
         this.initialDescriptionCache = "";
       }else if (!state.loading && !this.numbers.test(id)){
         this.router.navigate(['']);
-      }else if (!state.loading && Number(id) < (todos.length)){
+      }else if (!state.loading && todo){
         this.todo = todo;
         this.initialTitleCache = this.todo.title;
         this.initialDescriptionCache = this.todo.description;
-      }else if (!state.loading && Number(id) >= (todos.length)) {
+      }else if (!state.loading && !todo) {
         this.router.navigate(['']);
       }else{
       }  
@@ -87,25 +86,37 @@ export class TodoEditComponent implements OnInit{
   }
 
   backTodos(): void{
-    
+    this.router.navigate(['/todos']);
+  }
+
+  saveTodo(): void{
     if (!this.todo.title){
       this.todo.title = "";
     }
     if (!this.todo.description){
       this.todo.description = "";
     }
-
-    if ( this.todo.title !== this.initialTitleCache
-      || this.todo.description !== this.initialDescriptionCache){
-        let data = "";
+    let dataConfirmationDialog = {};
+    let widthConfirmationDialog = '0px'
+    if (this.todo.title && (this.todo.title !== this.initialTitleCache
+      || this.todo.description !== this.initialDescriptionCache)){
+        
         if (this.todo.id){
-          data = "Do you confirm the update of this todo ?";
+          dataConfirmationDialog = {
+            message:"Do you confirm the update of this todo ?",
+            yesButton: "Update"
+          };
+          widthConfirmationDialog = '480px'
         }else{
-          data = "Do you confirm the creation of this todo ?";
+          dataConfirmationDialog = {
+            message: "Do you confirm the creation of this todo ?",
+            yesButton: "Create"
+          };
+          widthConfirmationDialog = '490px'
         }
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-          width: '500px',
-          data: data
+          width: widthConfirmationDialog,
+          data: dataConfirmationDialog
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result) {
@@ -119,10 +130,17 @@ export class TodoEditComponent implements OnInit{
               
             }
           }
-          this.router.navigate(['/todos']);
         });
+    }else if (!this.todo.title){
+      dataConfirmationDialog = {
+        message:"A title is required for save a Todo"
+      };
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '400px',
+        data: dataConfirmationDialog
+      });
     }else{
-      this.router.navigate(['/todos']);
+      // do nothing
     }
   }
 
