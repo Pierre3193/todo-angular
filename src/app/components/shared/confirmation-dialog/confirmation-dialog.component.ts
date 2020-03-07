@@ -11,13 +11,17 @@ export class ConfirmationDialogComponent {
   message: string = '';
   yesButton: string = '';
   constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+    private dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: confirmationDialog) { 
       this.message = data.message;
       this.yesButton = data.yesButton;
     }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
+  }
+
+  onYesClick(): void {
+    this.dialogRef.close(true);
   }
 }

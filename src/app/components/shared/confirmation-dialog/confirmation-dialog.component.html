@@ -6,12 +6,12 @@
 
 <div mat-dialog-actions>
     <div style="margin: auto" *ngIf="yesButton; else errorMessage">
-        <button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{yesButton}}</button>
+        <button mat-button color="primary" [mat-dialog-close]="true" (click)="onYesClick()" cdkFocusInitial>{{yesButton}}</button>
         <button mat-button (click)="onNoClick()">Cancel</button> 
     </div>
     <ng-template #errorMessage>
         <div style="margin: auto" >
-            <button mat-button (click)="onNoClick()">Ok</button> 
+            <button mat-button color="primary" (click)="onYesClick()">Ok</button> 
         </div>
     </ng-template>
 </div>

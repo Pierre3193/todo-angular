@@ -19,9 +19,6 @@ import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confi
 export class TodoEditComponent implements OnInit{
   todo: Todo;
   todo$: Observable<TodoStateService>;
-  todoSubscription$: Observable<Todo[]>;
-  loading$: Observable<boolean>;
-  creatingTodo$ : Observable<Todo>;
 
   numbers = new RegExp(/^[0-9]+$/);
   beforeEditTitleCache: string;
@@ -41,23 +38,10 @@ export class TodoEditComponent implements OnInit{
   
   ngOnInit(): void {
     this.todo$ = this.store.pipe(select('todos'));
-    this.todoSubscription$ = this.todo$
-    .pipe(
-      map(x => {
-        return x.todos.sort(this.todoService.compare);
-      })
-    );
-    this.loading$ = this.todo$
-    .pipe(
-      map(x => {
-        return x.loading;
-      })
-    );
-    
+ 
     const id = this.route.snapshot.paramMap.get('id')
     this.store.dispatch(todoAction.getTodoAction({payload:Number(id)})); 
-    combineLatest(this.route.params, this.todo$).subscribe(([params, state]) => {
-      const id = params.id;
+    combineLatest(this.todo$).subscribe(([state]) => {
       const todo = state.editingTodo;
       if (!state.loading && this.createTodoReg.test(id)){
         this.todo = state.creatingTodo
@@ -89,30 +73,26 @@ export class TodoEditComponent implements OnInit{
     this.router.navigate(['/todos']);
   }
 
-  saveTodo(): void{
-    if (!this.todo.title){
-      this.todo.title = "";
-    }
-    if (!this.todo.description){
-      this.todo.description = "";
-    }
+  saveTodo(todo:Todo): void{
     let dataConfirmationDialog = {};
     let widthConfirmationDialog = '0px'
-    if (this.todo.title && (this.todo.title !== this.initialTitleCache
-      || this.todo.description !== this.initialDescriptionCache)){
+    if (todo.title && (todo.title !== this.initialTitleCache
+      || todo.description !== this.initialDescriptionCache) && 
+      (todo.title !== this.beforeEditTitleCache
+      || todo.description !== this.beforeEditDescriptionCache)){
         
-        if (this.todo.id){
+        if (todo.id !== undefined){
           dataConfirmationDialog = {
-            message:"Do you confirm the update of this todo ?",
+            message:"Do you confirm the update ?",
             yesButton: "Update"
           };
-          widthConfirmationDialog = '480px'
+          widthConfirmationDialog = '350px'
         }else{
           dataConfirmationDialog = {
-            message: "Do you confirm the creation of this todo ?",
+            message: "Do you confirm the creation ?",
             yesButton: "Create"
           };
-          widthConfirmationDialog = '490px'
+          widthConfirmationDialog = '365px'
         }
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           width: widthConfirmationDialog,
@@ -120,23 +100,28 @@ export class TodoEditComponent implements OnInit{
         });
         dialogRef.afterClosed().subscribe(result => {
           if(result) {
-            if ( this.todo.title !== this.beforeEditTitleCache
-                || this.todo.description !== this.beforeEditDescriptionCache){
-                if (this.todo.id){
-                  this.store.dispatch(todoAction.UpdateTodoAction({ payload: this.todo}));
-                }else{
-                  this.store.dispatch(todoAction.CreateTodoAction({ payload: this.todo}));
-                }
-              
+            if (!todo.description){
+              todo.editingTitle = false;
+              todo.editingDescription = true;
+            }else {
+              todo.editingTitle = false;
+              todo.editingDescription = false;
+            }
+            
+            if (todo.id !== undefined){
+              this.store.dispatch(todoAction.UpdateTodoAction({ payload: todo}));
+            }else{
+              this.store.dispatch(todoAction.CreateTodoAction({ payload: todo}));
+              this.router.navigate([''])
             }
           }
         });
-    }else if (!this.todo.title){
+    }else if (!todo.title){
       dataConfirmationDialog = {
-        message:"A title is required for save a Todo"
+        message:"A title is required"
       };
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '400px',
+        width: '230px',
         data: dataConfirmationDialog
       });
     }else{
@@ -144,39 +129,38 @@ export class TodoEditComponent implements OnInit{
     }
   }
 
-  editTodoTile(){
-    this.beforeEditTitleCache = this.todo.title;
-    this.todo.editingTitle = true;
-    this.todo.editingDescription = false;
+  editTodoTile(todo:Todo){
+    this.beforeEditTitleCache = todo.title;
+    todo.editingTitle = true;
+    todo.editingDescription = false;
   }
 
-  doneEditTodoTitle(){
-    if (this.todo.title.trim().length === 0){
-      this.todo.title = this.beforeEditTitleCache;
+  doneEditTodoTitle(todo:Todo){
+    if (todo.title.trim().length === 0){
+      todo.title = this.beforeEditTitleCache;
     }
-    this.todo.editingTitle = false;
+    todo.editingTitle = false;
+    todo.editingDescription = true;
   }
 
-  cancelEditTodoTitle(){
-    this.todo.title = this.beforeEditTitleCache;
-    this.todo.editingTitle = false;
+  cancelEditTodoTitle(todo:Todo){
+    todo.title = this.beforeEditTitleCache;
   }
 
-  editTodoDescription(){
-    this.beforeEditDescriptionCache = this.todo.description;
-    this.todo.editingDescription = true;
-    this.todo.editingTitle = false;
+  editTodoDescription(todo:Todo){
+    this.beforeEditDescriptionCache = todo.description;
+    todo.editingDescription = true;
+    todo.editingTitle = false;
   }
 
-  doneEditTodoDescription(){
-    if (this.todo.description.trim().length === 0){
-      this.todo.description = this.beforeEditDescriptionCache;
+  doneEditTodoDescription(todo:Todo){
+    if (todo.description.trim().length === 0){
+      todo.description = this.beforeEditDescriptionCache;
     }
-    this.todo.editingDescription = false;
+    todo.editingDescription = false;
   }
 
-  cancelEditTodoDescription(){
-    this.todo.description = this.beforeEditDescriptionCache;
-    this.todo.editingDescription = false;
+  cancelEditTodoDescription(todo:Todo){
+    todo.description = this.beforeEditDescriptionCache;
   }
 }

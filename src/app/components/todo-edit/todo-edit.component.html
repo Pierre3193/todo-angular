@@ -1,51 +1,64 @@
 
-<div class="todo-attribut" *ngIf="todo">
-    <div *ngIf="todo.title && !todo.editingTitle; else editingTodoTitle" 
-    class="todo-attribut-label" (click)="editTodoTile()">{{ todo.title }}</div>
-    <ng-template #editingTodoTitle>
-        <mat-form-field>
-        <input matInput type="text" [(ngModel)]
-            ="todo.title" placeholder="Add a title for your todo" 
-            (click)="editTodoTile()" (keyup.enter)
-            ="doneEditTodoTitle()" (keyup.esc)="cancelEditTodoTitle()" autofocus> 
-        </mat-form-field>
-    </ng-template>
-</div>
-
-<div class="extra-container"></div>
-
-<div class="todo-attribut" *ngIf="todo">
-    <div *ngIf="todo.description && !todo.editingDescription; else editingTodoDescription" 
-        class="todo-attribut-label"(click)="editTodoDescription()">{{ todo.description }}</div>
-    <ng-template #editingTodoDescription>
-        <mat-form-field *ngIf='!todo.title && !todo.description || todo.editingTitle; else addFocus'>
-            <textarea matInput type="text" [(ngModel)]
-                ="todo.description" placeholder="Add a description for your todo" 
-                (click)="editTodoDescription()" (keyup.enter)
-                ="doneEditTodoDescription()" (keyup.esc)="cancelEditTodoDescription()" 
-                cdkTextareaAutosize="true">
-        </textarea>
-        </mat-form-field>
-    </ng-template>
-    <ng-template #addFocus>
-        <mat-form-field>
-            <textarea matInput type="text" [(ngModel)]
-                ="todo.description" placeholder="Add a description for your todo" 
-                (click)="editTodoDescription()" (keyup.enter)
-                ="doneEditTodoDescription()" (keyup.esc)="cancelEditTodoDescription()" 
-                cdkTextareaAutosize="true" autofocus>
-        </textarea>
-        </mat-form-field>
-    </ng-template>
+<div *ngIf="todo ; else loadingSpinner">
+    <div class="todo-attribut">
+        <div *ngIf="todo.title && !todo.editingTitle; else editingTodoTitle" 
+        class="todo-attribut-label" (click)="editTodoTile(todo)">{{ todo.title }}</div>
+        <ng-template #editingTodoTitle>
+            <mat-form-field>
+            <input matInput type="text" [(ngModel)]="todo.title" 
+                placeholder="Title" 
+                (click)="editTodoTile(todo)" 
+                (keyup.enter)="doneEditTodoTitle(todo)" 
+                (keyup.esc)="cancelEditTodoTitle(todo)" autofocus> 
+            </mat-form-field>
+        </ng-template>
+    </div>
     
-</div>
-  
-<div class="extra-container">
-    <div>
-      <button mat-button (click)="backTodos()">Back</button>
+    <div class="extra-container"></div>
+    
+    <div class="todo-attribut">
+        <div *ngIf="todo.description && !todo.editingDescription; else editingTodoDescription" 
+            class="todo-attribut-label"(click)="editTodoDescription(todo)">{{ todo.description }}</div>
+        <ng-template #editingTodoDescription>
+            <mat-form-field *ngIf='!todo.title && !todo.description || todo.editingTitle; else addFocus'>
+                <textarea matInput type="text" [(ngModel)]="todo.description" 
+                    placeholder="Description" 
+                    (click)="editTodoDescription(todo)" 
+                    (keyup.enter)="doneEditTodoDescription(todo)" 
+                    (keyup.esc)="cancelEditTodoDescription(todo)" 
+                    cdkTextareaAutosize="true">
+            </textarea>
+            </mat-form-field>
+        </ng-template>
+        <ng-template #addFocus>
+            <mat-form-field>
+                <textarea matInput type="text" [(ngModel)]="todo.description" 
+                    placeholder="Description" 
+                    (click)="editTodoDescription(todo)" 
+                    (keyup.enter)="doneEditTodoDescription(todo)" 
+                    (keyup.esc)="cancelEditTodoDescription(todo)" 
+                    cdkTextareaAutosize="true" autofocus>
+            </textarea>
+            </mat-form-field>
+        </ng-template>
+        
     </div>
-    <div>
-        <button mat-button (click)="saveTodo()">Save</button>
+      
+    <div class="extra-container">
+        <div>
+          <button mat-button (click)="backTodos()">Back</button>
+        </div>
+        <div *ngIf="todo.id; else create">
+            <button mat-button (click)="saveTodo(todo)">Update</button>
+        </div>
+        <ng-template #create>
+            <div>
+                <button mat-button (click)="saveTodo(todo)">Create</button>
+            </div>
+        </ng-template>
+      
     </div>
-  
 </div>
+<ng-template #loadingSpinner>
+    <mat-spinner style="margin: auto"></mat-spinner>
+</ng-template>

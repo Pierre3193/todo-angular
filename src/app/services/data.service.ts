@@ -10,7 +10,7 @@ export class DataService implements InMemoryDbService{
   constructor() { }
 
   createDb(){
-    const todos= [
+    const todos : Todo[] = [
       {
         'id' : 0,
         'title' : 'Finir la première user storie',
